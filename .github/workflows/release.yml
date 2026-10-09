@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -12,6 +15,11 @@ jobs:
       contents: write
       
     steps:
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+      with:
+        egress-policy: audit
+
     - name: Checkout code
       uses: actions/checkout@v4
       with:
@@ -50,7 +58,7 @@ jobs:
         asset_content_type: application/zip
         
     - name: Notify Slack
-      uses: 8398a7/action-slack@v3
+      uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
       with:
         status: ${{ job.status }}
         channel: '#releases'
